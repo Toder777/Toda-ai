@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Toda AI Agent — Интеллектуальный помощник</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(44, 110, 79, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(112, 224, 176, 0.08) 0%, transparent 50%);
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Шапка */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5f3c3, #4caf50, #2c6e4f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .badge {
+            display: inline-flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .badge-item {
+            background: rgba(44, 110, 79, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #a5f3c3;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0b0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Кнопка скачать */
+        .download-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #2c6e4f, #1e4a35);
+            border: none;
+            padding: 16px 40px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 110, 79, 0.4);
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 110, 79, 0.5);
+            background: linear-gradient(135deg, #3e8e68, #2c6e4f);
+        }
+
+        .download-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Карточки возможностей */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: rgba(30, 30, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(76, 175, 80, 0.3);
+            background: rgba(40, 40, 50, 0.8);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #a5f3c3;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: #b0b0c0;
+            line-height: 1.5;
+        }
+
+        /* Примеры запросов */
+        .examples-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, #e8e8e8, #a0a0b0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .example-card {
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-card:hover {
+            background: rgba(44, 110, 79, 0.15);
+            border-color: rgba(76, 175, 80, 0.4);
+            transform: translateX(5px);
+        }
+
+        .example-question {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #e8e8e8;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .example-icon {
+            font-size: 1.2rem;
+        }
+
+        .example-answer {
+            font-size: 0.85rem;
+            color: #8888a0;
+            line-height: 1.4;
+            border-left: 2px solid #2c6e4f;
+            padding-left: 12px;
+            margin-top: 8px;
+        }
+
+        /* Кнопка чата */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #2c6e4f, #1e4a35);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(44, 110, 79, 0.5);
+            z-index: 1000;
+            text-decoration: none;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(44, 110, 79, 0.7);
+        }
+
+        .chat-button span {
+            font-size: 1.8rem;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* Анимации */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card, .example-card, .download-section {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+        .example-card:nth-child(1) { animation-delay: 0.15s; }
+        .example-card:nth-child(2) { animation-delay: 0.25s; }
+        .example-card:nth-child(3) { animation-delay: 0.35s; }
+        .example-card:nth-child(4) { animation-delay: 0.45s; }
+        .download-section { animation-delay: 0.5s; }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+            .logo {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .download-btn {
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">Toda AI Agent</div>
+        <div class="badge">
+            <span class="badge-item">🤖 LangGraph</span>
+            <span class="badge-item">🧠 DeepSeek</span>
+            <span class="badge-item">📁 Файловая система</span>
+            <span class="badge-item">🔍 Веб-поиск</span>
+            <span class="badge-item">💾 Долговременная память</span>
+        </div>
+        <div class="subtitle">
+            Интеллектуальный AI-агент с полным контролем над файлами, поиском в интернете,
+            выполнением команд и долговременной памятью. Работает полностью локально.
+        </div>
+    </div>
+
+    <div class="download-section">
+        <button class="download-btn" id="downloadBtn">
+            <span>📦</span> Скачать Toda AI Agent
+        </button>
+        <p style="margin-top: 16px; font-size: 0.8rem; color: #666;">
+            Версия 2.0 · Windows / macOS / Linux · Бесплатно
+        </p>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">📁</div>
+            <div class="feature-title">Управление файлами</div>
+            <div class="feature-desc">Создавайте, читайте, редактируйте и удаляйте файлы. Работа с текстовыми документами, JSON, кодом.</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-title">Веб-поиск</div>
+            <div class="feature-desc">Ищите информацию в интернете через DuckDuckGo без API-ключей.</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <div class="feature-title">Долговременная память</div>
+            <div class="feature-desc">Агент помнит все диалоги даже после перезапуска сервера.</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⌨️</div>
+            <div class="feature-title">Выполнение команд</div>
+            <div class="feature-desc">Запускайте CMD-команды, скрипты, эмулируйте нажатия клавиш.</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🌤️</div>
+            <div class="feature-title">Погода и заметки</div>
+            <div class="feature-desc">Узнавайте погоду в любом городе, сохраняйте заметки в файл.</div>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <div class="feature-title">Мульти-чаты</div>
+            <div class="feature-desc">Создавайте несколько чатов, переименовывайте, удаляйте. Всё сохраняется.</div>
+        </div>
+    </div>
+
+    <div class="examples-section">
+        <h2 class="section-title">✨ Примеры запросов</h2>
+        <div class="examples-grid">
+            <div class="example-card" data-query="создай файл todo.txt с планом на сегодня">
+                <div class="example-question">
+                    <span class="example-icon">📄</span>
+                    <span>создай файл todo.txt с планом на сегодня</span>
+                </div>
+                <div class="example-answer">
+                    Агент создаст файл и запишет в него ваш план.
+                </div>
+            </div>
+            <div class="example-card" data-query="найди в интернете последние новости ИИ">
+                <div class="example-question">
+                    <span class="example-icon">🔍</span>
+                    <span>найди в интернете последние новости ИИ</span>
+                </div>
+                <div class="example-answer">
+                    Поиск через DuckDuckGo, вернёт краткую выжимку из статей.
+                </div>
+            </div>
+            <div class="example-card" data-query="какая погода в Санкт-Петербурге">
+                <div class="example-question">
+                    <span class="example-icon">🌤️</span>
+                    <span>какая погода в Санкт-Петербурге</span>
+                </div>
+                <div class="example-answer">
+                    Текущая температура, осадки, облачность.
+                </div>
+            </div>
+            <div class="example-card" data-query="запомни: купить хлеб и молоко">
+                <div class="example-question">
+                    <span class="example-icon">📝</span>
+                    <span>запомни: купить хлеб и молоко</span>
+                </div>
+                <div class="example-answer">
+                    Сохранит заметку в файл notes.txt с временной меткой.
+                </div>
+            </div>
+            <div class="example-card" data-query="выполни команду dir /w">
+                <div class="example-question">
+                    <span class="example-icon">💻</span>
+                    <span>выполни команду dir /w</span>
+                </div>
+                <div class="example-answer">
+                    Покажет содержимое текущей директории в консоли.
+                </div>
+            </div>
+            <div class="example-card" data-query="нажми клавиши CTRL+C">
+                <div class="example-question">
+                    <span class="example-icon">⌨️</span>
+                    <span>нажми клавиши CTRL+C</span>
+                </div>
+                <div class="example-answer">
+                    Эмулирует нажатие комбинации клавиш (требуется pyautogui).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Toda AI Agent — создан на LangGraph + DeepSeek. Все данные хранятся локально.</p>
+        <p style="margin-top: 8px;">© 2026 Toda · Бесплатно для некоммерческого использования</p>
+    </div>
+</div>
+
+<a href="chat.html" class="chat-button">
+    <span>💬</span>
+</a>
+
+<script>
+    // Функция скачивания бэкенда и фронтенда
+    function downloadToda() {
+        // Создаём архив с файлами
+        alert('Загрузка архива с Toda AI Agent...\n\nФайлы будут сохранены:\n- backend.py\n- index.html\n- static/index.html (чат)\n\nИнструкция по установке в файле README.txt');
+
+        // Эмулируем скачивание через создание ссылок
+        // В реальности здесь должен быть запрос к серверу, возвращающий ZIP-архив
+
+        // Для демонстрации предлагаем скачать по отдельности
+        const files = [
+            { name: 'backend.py', url: '/download/backend.py' },
+            { name: 'index.html', url: '/download/index.html' },
+            { name: 'chat.html', url: '/download/chat.html' }
+        ];
+
+        files.forEach(file => {
+            const link = document.createElement('a');
+            link.href = file.url;
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+
+    // Обработчик кнопки скачивания
+    document.getElementById('downloadBtn').addEventListener('click', downloadToda);
+
+    // Обработчики примеров запросов
+    document.querySelectorAll('.example-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const query = card.getAttribute('data-query');
+            if (query) {
+                // Сохраняем запрос в localStorage для перехода в чат
+                localStorage.setItem('toda_pending_query', query);
+                window.location.href = 'chat.html';
+            }
+        });
+    });
+</script>
+
+<style>
+    /* Дополнительные стили для ссылок */
+    .chat-button {
+        text-decoration: none;
+        color: white;
+    }
+
+    /* Плавный скролл */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Кастомный скроллбар */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #2c6e4f;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #3e8e68;
+    }
+</style>
+</body>
+</html>
