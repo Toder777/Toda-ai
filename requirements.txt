@@ -1,0 +1,9 @@
+opendeep>=0.1.0
+langgraph>=1.2.0
+langchain>=1.3.0
+langchain-core>=1.4.0
+fastapi>=0.136.0
+uvicorn>=0.49.0
+requests>=2.32.0
+pyautogui>=0.9.54
+pydantic>=2.13.0
